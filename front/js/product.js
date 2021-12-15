@@ -2,6 +2,8 @@ const queryString = window.location.search //sert à avoir l'id
 const urlParams = new URLSearchParams(queryString)
 const id = urlParams.get("id")
 let itemPrice = 0 //let pour rendre modifiable
+let imgUrl, altText //on va les passer dans le data
+let itemName = "" //Ajout du name dans le storage
 
 fetch("http://localhost:3000/api/products/" + id)//adresse du produit
 .then((response) => response.json())
@@ -13,6 +15,9 @@ function handleData(kanap){
     //on récupère tout les objets mis dans kanap
     const { altTxt, colors, description, imageUrl, name, price} = kanap
     itemPrice = price //le prix récupérer va changer le prix de itemprice
+    imgUrl = imageUrl
+    altText = altTxt
+    itemName = name
     //je passe les objets dans les fonctions
     makeImage(imageUrl, altTxt)
     makeTitle(name)
@@ -58,6 +63,7 @@ const button = document.querySelector("#addToCart") //sélectionne id de ajouter
         const quantity = document.querySelector("#quantity").value
         if(color == null || color === "" || quantity == null || quantity == 0) { //si 1 des 2 est null alors
             alert("Veuillez sélectionner une couleur et une quantité")//affichage d'une alerte
+            return //afin que ca ne stop et ne s'éxecute pas
         }
 
     const data = { //fabrication d'un objet
@@ -65,7 +71,11 @@ const button = document.querySelector("#addToCart") //sélectionne id de ajouter
         color: color,
         quantity: Number(quantity),//number entour quantity
         price: itemPrice,
+        imageUrl: imgUrl,
+        altTxt: altText,
+        name: itemName
     }
     localStorage.setItem(id, JSON.stringify(data))//ajout dans un emplacement de stockage(clé créer, les valeurs se trouvant dans data)
-    //problème d'affichage du data il affiche object il faut transformer en string
+    //problème d'affichage du data il affiche object il faut transformer en string grace a stringify
+    window.location.href = "cart.html"
 })
