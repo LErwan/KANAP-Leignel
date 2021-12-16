@@ -58,14 +58,19 @@ function makeColors(colors){
 }
 
 const button = document.querySelector("#addToCart") //sélectionne id de ajouter au panier on met dans button
-    button.addEventListener("click", (e) => { //event quand on clique 
+    button.addEventListener("click", () => { //event quand on clique 
         const color = document.querySelector("#colors").value //renvoie les values
         const quantity = document.querySelector("#quantity").value
         if(color == null || color === "" || quantity == null || quantity == 0) { //si 1 des 2 est null alors
             alert("Veuillez sélectionner une couleur et une quantité")//affichage d'une alerte
             return //afin que ca ne stop et ne s'éxecute pas
         }
+    saveCart(color, quantity)
+    window.location.href = "cart.html"
+})
 
+function saveCart(color, quantity) {
+    
     const data = { //fabrication d'un objet
         id: id,
         color: color,
@@ -77,5 +82,4 @@ const button = document.querySelector("#addToCart") //sélectionne id de ajouter
     }
     localStorage.setItem(id, JSON.stringify(data))//ajout dans un emplacement de stockage(clé créer, les valeurs se trouvant dans data)
     //problème d'affichage du data il affiche object il faut transformer en string grace a stringify
-    window.location.href = "cart.html"
-})
+}
