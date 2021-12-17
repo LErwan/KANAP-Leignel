@@ -1,7 +1,13 @@
 fetch("http://localhost:3000/api/products")//il fetch des données
     .then((res) => res.json())//Applique la fonction json
     .then((data) => addProducts(data))//qd fetch a les données il appel addproducts
-
+    .catch((error) => {
+        const productsDisplay = document.querySelector(".items")
+        productsDisplay.innerHTML = "Impossible d'afficher les produits <br> Vérifiez que le serveur soit bien lancé."
+        productsDisplay.style.textAlign = "center";
+        productsDisplay.style.padding = "50px 0";
+        productsDisplay.style.fontSize = "50px"
+    })
 //Addproducts récupère les données du 1er élément
 function addProducts(donnees){
 
