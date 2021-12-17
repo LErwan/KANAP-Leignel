@@ -1,6 +1,5 @@
 const cart = []; //une array
 
-
 retrieveItemsFromStorage()
 cart.forEach(item => displayItem(item))
 
@@ -25,6 +24,29 @@ function displayItem(item){
     displayTotalQuantity()
 }
 
+function makeArticle(item){
+    const article = document.createElement('article') //création élément article
+    article.classList.add('cart__item') //ajout de la classe item à article
+    article.dataset.id = item.id //data set = ajout d'élément html pour data-id
+    article.dataset.color = item.color
+    return article
+}
+
+function makeImageDiv(item){
+    const imageDiv = document.createElement("div") //Création d'une div
+    imageDiv.classList.add('cart__item__img') //ajout d'une classe
+    
+    const image = document.createElement('img') //Création élément img
+    image.src = item.imageUrl
+    image.alt = item.altTxt
+    imageDiv.appendChild(image) //donne à la div enfant image
+    return imageDiv
+}
+
+
+function displayArticle(article){ //fonction pour mettre article dans la page
+    document.querySelector('#cart__items').appendChild(article)
+}
 
 function displayTotalPrice(){
     let total = 0;
@@ -104,6 +126,17 @@ function addQuantityToSettings(settings, item){
     settings.appendChild(quantity)
 }
 
+function addDeleteToSettings(settings, item){
+    const div = document.createElement('div')
+    div.classList.add('cart__item__content__settings__delete')
+    div.addEventListener("click", () =>  deleteItem(item))
+    const p = document.createElement('p')
+    p.classList.add('deleteItem')
+    p.textContent = 'Supprimer'
+    div.appendChild(p)
+    settings.appendChild(div)
+}
+
 function newPriceAndQuantity(id, newValue, item){
     const itemToUpdate = cart.find((item) => item.id === id) //donne l'item qui va changer
     itemToUpdate.quantity = Number(newValue)
@@ -119,16 +152,7 @@ function saveNewDataToCache(item){
     localStorage.setItem(key, dataToSave)
 }
 
-function addDeleteToSettings(settings, item){
-    const div = document.createElement('div')
-    div.classList.add('cart__item__content__settings__delete')
-    div.addEventListener("click", () =>  deleteItem(item))
-    const p = document.createElement('p')
-    p.classList.add('deleteItem')
-    p.textContent = 'Supprimer'
-    div.appendChild(p)
-    settings.appendChild(div)
-}
+
 
 function deleteItem(item){
     const itemToDelete = cart.findIndex(
@@ -141,35 +165,15 @@ function deleteItem(item){
     deleteArticleFromPage(item)
 }
 
-function deleteArticleFromPage(item){
-    const articleToDelete = document.querySelector(`article[data-id="${item.id}"][data-color="${item.color}"]`)
-    articleToDelete.remove()
-}
 function deleteDataFromCache(item){
     const key = `${item.id}-${item.color}`
     localStorage.removeItem(key)
 }
 
-function displayArticle(article){ //fonction pour mettre article dans la page
-    document.querySelector('#cart__items').appendChild(article)
+function deleteArticleFromPage(item){
+    const articleToDelete = document.querySelector(`article[data-id="${item.id}"][data-color="${item.color}"]`)
+    articleToDelete.remove()
 }
 
-function makeArticle(item){
-    const article = document.createElement('article') //création élément article
-    article.classList.add('cart__item') //ajout de la classe item à article
-    article.dataset.id = item.id //data set = ajout d'élément html pour data-id
-    article.dataset.color = item.color
-    return article
-}
 
-function makeImageDiv(item){
-    const imageDiv = document.createElement("div") //Création d'une div
-    imageDiv.classList.add('cart__item__img') //ajout d'une classe
-    
-    const image = document.createElement('img') //Création élément img
-    image.src = item.imageUrl
-    image.alt = item.altTxt
-    imageDiv.appendChild(image) //donne à la div enfant image
-    return imageDiv
-}
 
