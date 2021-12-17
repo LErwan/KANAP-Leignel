@@ -25,6 +25,27 @@ function displayItem(item){
     displayTotalQuantity()
 }
 
+
+function displayTotalPrice(){
+    let total = 0;
+    const totalPrice = document.querySelector('#totalPrice')
+    cart.forEach(item => {
+        const totalUnitprice = item.price * item.quantity
+        total += totalUnitprice
+    })
+    totalPrice.textContent = total
+}
+
+function displayTotalQuantity(){
+    let total = 0;
+    const totalQuantity = document.querySelector('#totalQuantity')
+    cart.forEach(item => {
+        const totalUnitprice = item.quantity
+        total += totalUnitprice
+    })
+    totalQuantity.textContent = total
+}
+
 function makeCartContent(item){
     const cardItemContent = document.createElement('div')
     cardItemContent.classList.add('cart__item__content')
@@ -54,6 +75,7 @@ function makeDescription(item){
     return description
 }
 
+
 function makeSettings(item){
     const settings = document.createElement('div')
     settings.classList.add('cart__item__content__settings')
@@ -75,10 +97,28 @@ function addQuantityToSettings(settings, item){
     input.name = "itemQuantity"
     input.min = "1"
     input.max = "100"
-    input.value = item.quantity
+    input.value = item.quantity //version par défaut
+    input.addEventListener('input', () => newPriceAndQuantity(item.id, input.value, item)) //quand on clique on l'envoie dans newPriceand..
+
     quantity.appendChild(input)
     settings.appendChild(quantity)
 }
+
+function newPriceAndQuantity(id, newValue, item){
+    const itemToUpdate = cart.find((item) => item.id === id) //donne l'item qui va changer
+    itemToUpdate.quantity = Number(newValue)
+    item.quantity = itemToUpdate.quantity
+    displayTotalQuantity() //prend new valeur de cart qui voient d'être changé
+    displayTotalPrice()
+    saveNewDataToCache(item)
+}
+
+function saveNewDataToCache(item){
+    const dataToSave = JSON.stringify(item)
+    const key = `${item.id}-${item.color}`
+    localStorage.setItem(key, dataToSave)
+}
+
 function addDeleteToSettings(settings){
     const div = document.createElement('div')
     div.classList.add('cart__item__content__settings__delete')
@@ -91,26 +131,6 @@ function addDeleteToSettings(settings){
 
 function displayArticle(article){ //fonction pour mettre article dans la page
     document.querySelector('#cart__items').appendChild(article)
-}
-
-function displayTotalPrice(){
-    let total = 0;
-    const totalPrice = document.querySelector('#totalPrice')
-    cart.forEach(item => {
-        const totalUnitprice = item.price * item.quantity
-        total += totalUnitprice
-    })
-    totalPrice.textContent = total
-}
-
-function displayTotalQuantity(){
-    let total = 0;
-    const totalQuantity = document.querySelector('#totalQuantity')
-    cart.forEach(item => {
-        const totalUnitprice = item.quantity
-        total += totalUnitprice
-    })
-    totalQuantity.textContent = total
 }
 
 function makeArticle(item){

@@ -70,7 +70,7 @@ const button = document.querySelector("#addToCart") //sélectionne id de ajouter
 })
 
 function saveCart(color, quantity) {
-    
+    const key = `${id}-${color}`
     const data = { //fabrication d'un objet
         id: id,
         color: color,
@@ -80,6 +80,6 @@ function saveCart(color, quantity) {
         altTxt: altText,
         name: itemName
     }
-    localStorage.setItem(id, JSON.stringify(data))//ajout dans un emplacement de stockage(clé créer, les valeurs se trouvant dans data)
+    localStorage.setItem(key, JSON.stringify(data))//ajout dans un emplacement de stockage(clé créer, les valeurs se trouvant dans data)
     //problème d'affichage du data il affiche object il faut transformer en string grace a stringify
 }
