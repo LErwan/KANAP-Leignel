@@ -202,7 +202,12 @@ function sumbitForm(e){
         }
     })
     .then((res) => res.json())
-    .then((data) => console.log(data))
+    .then((data) => {
+        const orderId = data.orderId
+        window.location.href = "./confirmation.html" + "?orderId=" + orderId
+        return console.log(data)
+    })
+    .catch((err) => console.log(err))
 }
 
 function validateForm(){
@@ -298,3 +303,4 @@ function getIdsFromCache(){
     }
     return ids
 }
+
