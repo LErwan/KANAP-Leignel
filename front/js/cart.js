@@ -3,6 +3,9 @@ const cart = []; //une array
 retrieveItemsFromStorage()
 cart.forEach(item => displayItem(item))
 
+const orderButton = document.querySelector("#order")
+orderButton.addEventListener("click", (e) => sumbitForm(e))
+
 function retrieveItemsFromStorage(){
     const numberOfItems = localStorage.length
     for(let i = 0; i < numberOfItems; i++){ //tant que i < taille du storage i augmente
@@ -175,5 +178,123 @@ function deleteArticleFromPage(item){
     articleToDelete.remove()
 }
 
+//FORMULAIRE
+
+function sumbitForm(e){
+    e.preventDefault() //bloque le comportement de l'événement par défaut
+    if (cart.length === 0) {
+        alert("Veuillez choisir des articles")
+        return
+    }
+    if (validateForm()) return
+    if (validateFirstName())return
+    if (validateLastName()) return
+    if (validateAddress()) return
+    if (validateCity()) return
+    if (validateEmail()) return
+
+    const body = makeRequestBody()
+    fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then((res) => res.json())
+    .then((data) => console.log(data))
+}
+
+function validateForm(){
+    const form = document.querySelector(".cart__order__form")
+    const inputs = form.querySelectorAll("input")//selectionne tout les input
+    inputs.forEach((input) => { //pour chaque input
+        if (input.value === "") { //si value est nul
+            alert("veuillez remplir tous les champs") //message indique qu'il faut remplir
+            return true
+        }
+        return false
+    })
+}
+function validateFirstName(){
+    const firstName = document.querySelector('#firstName').value//on veut la valeur de l'email et non pas le email complet
+    const regex = /^[A-Za-z -]+$/
+    if (regex.test(firstName) === false){
+        const p = document.querySelector('#firstNameErrorMsg')
+        p.textContent = "Le prénom saisi est invalide"
+        return true
+    }
+        return false
+}
+function validateLastName(){
+    const lastName = document.querySelector('#lastName').value//on veut la valeur de l'email et non pas le email complet
+    const regex = /^[A-Za-z -]+$/
+    if (regex.test(lastName) === false){
+        const p = document.querySelector('#lastNameErrorMsg')
+        p.textContent = "Le nom saisi est invalide"
+        return true
+    }
+        return false
+}
+function validateAddress(){
+    const address = document.querySelector('#address').value//on veut la valeur de l'email et non pas le email complet
+    const regex = /^[0-9]+[A-Za-z ,'-]+$/
+    if (regex.test(address) === false){
+        const p = document.querySelector('#addressErrorMsg')
+        p.textContent = "L'adresse saisie est invalide"
+        return true
+    }
+        return false
+}
+function validateCity(){
+    const city = document.querySelector('#city').value//on veut la valeur de l'email et non pas le email complet
+    const regex = /^[A-Za-z ,-]+$/
+    if (regex.test(city) === false){
+        const p = document.querySelector('#cityErrorMsg')
+        p.textContent = "La ville saisie est invalide"
+        return true
+    }
+        return false
+}
+function validateEmail(){
+    const email = document.querySelector('#email').value//on veut la valeur de l'email et non pas le email complet
+    const regex = /^[a-zA-Z0-9._-]+[@]{1}[a-zA-Z0-9.-]+[.]{1}[a-z]{2,10}$/
+    if (regex.test(email) === false){
+        const p = document.querySelector('#emailErrorMsg')
+        p.textContent = "adresse mail invalide"
+        return true
+    }
+        return false
+}
 
 
+function makeRequestBody(){
+    const form = document.querySelector(".cart__order__form")
+    const firstName = form.elements.firstName.value
+    const lastName = form.elements.lastName.value
+    const address = form.elements.address.value
+    const city = form.elements.city.value
+    const email = form.elements.email.value
+    const body = { 
+        contact : {
+            firstName: firstName,
+            lastName: lastName,
+            address: address,
+            city: city,
+            email: email
+        },
+        products: getIdsFromCache()
+    }
+    return body
+}
+
+function getIdsFromCache(){
+    const numberOfProducts = localStorage.length
+    const ids = []
+    for (let i = 0; i < numberOfProducts; ++i){
+        const key = localStorage.key(i)
+        const id = key.split("-")[0] //split créer un array couper en 2 par le - coté gauche id et droit couleur [0]=1ere valeur
+        ids.push(id) //on prend id qu'on met dans ids[]
+    }
+    return ids
+}
